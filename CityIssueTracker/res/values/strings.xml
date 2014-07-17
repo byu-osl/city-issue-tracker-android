@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string name="app_name">CityIssueTracker</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="get_service_list_button">Get Service List</string>
+    <string name="get_service_request_button">Get Service Request</string>
+    <string name="post_service_request_button">Post Service Request</string>
+    <string name="view_issues_button">View Issues</string>
+    <string name="title_activity_view_issues">ViewIssuesActivity</string>
+
+</resources>
