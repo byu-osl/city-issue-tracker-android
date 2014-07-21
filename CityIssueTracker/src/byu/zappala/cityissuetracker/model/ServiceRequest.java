@@ -20,6 +20,46 @@ public class ServiceRequest {
 	double longitude;
 	String mediaURL;
 	
+	public ServiceRequest(String serviceRequestID, String status,
+			String statusNotes, String serviceName, String serviceCode,
+			String description, String agencyResponsible,
+			String serviceNotice, String requestedDatetime,
+			String updatedDatetime, String expectedDatetime, String address,
+			String addressID, String zipcode, double latitude,
+			double longitude, String mediaURL) {
+		
+		this.serviceRequestID = serviceRequestID;
+		this.status = status;
+		this.statusNotes = statusNotes;
+		this.serviceName = serviceName;
+		this.serviceCode = serviceCode;
+		this.description = description;
+		this.agencyResponsible = agencyResponsible;
+		this.serviceNotice = serviceNotice;
+		this.requestedDatetime = requestedDatetime;
+		this.updatedDatetime = updatedDatetime;
+		this.expectedDatetime = expectedDatetime;
+		this.address = address;
+		this.addressID = addressID;
+		this.zipcode = zipcode;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.mediaURL = mediaURL;
+		
+	}
+	
+	@Override
+	public String toString() {
+		//return "Hello!";
+		return String.format("Service Request ID: %s, Status: %s, Status Notes: %s, Service Name: %s, "
+				           + "Service Code: %s, Description: %s, Agency Responsible: %s, Service Notice: %s, "
+				           + "Requested Datetime: %s, Updated Datetime: %s, Expected Datetime: %s, Address: %s, "
+				           + "Address ID: %s, Zipcode: %s, Latitude: %f, Longitude: %f, Media URL: %s", 
+				           serviceRequestID, status, statusNotes, serviceName, serviceCode, description, 
+				           agencyResponsible, serviceNotice, requestedDatetime, updatedDatetime,
+				           expectedDatetime, address, addressID, zipcode, latitude, longitude, mediaURL);	
+	}
+	
 	public String getServiceRequestID() {
 		return serviceRequestID;
 	}

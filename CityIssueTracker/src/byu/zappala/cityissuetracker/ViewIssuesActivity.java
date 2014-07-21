@@ -16,8 +16,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.xmlpull.v1.XmlPullParserException;
 
 import byu.zappala.cityissuetracker.MainActivity.RequestTask;
+import byu.zappala.cityissuetracker.model.ServiceRequest;
+import byu.zappala.cityissuetracker.utils.ServiceRequestXMLParser;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -84,23 +87,25 @@ public class ViewIssuesActivity extends ActionBarActivity {
 	
 	class RequestTask extends AsyncTask<String, String, String>{
 
+		List<ServiceRequest> serviceRequests = null;
+		
 		@Override
 		protected String doInBackground(String... params) {
 			HttpClient httpclient = new DefaultHttpClient();
 	        HttpResponse response;
 	        String responseString = null;
+	        ServiceRequestXMLParser parser = new ServiceRequestXMLParser();
 	        
 	        if(params[1] == "GET_SERVICE_LIST") {
 	        	try {
 	        		
+	        		
+	        		
 	        		response = httpclient.execute(new HttpGet(params[0]));
 	        		StatusLine statusLine = response.getStatusLine();
-	        		ByteArrayOutputStream out = new ByteArrayOutputStream();
-        			response.getEntity().writeTo(out);
-        			out.close();
-        			responseString = out.toString();
-        			  
-        			
+	        		
+        			serviceRequests = parser.parseServiceRequestList(response.getEntity().getContent());
+					
 	        		if(statusLine.getStatusCode() == HttpStatus.SC_OK){
 	        		} else{
 	        		}
@@ -108,7 +113,9 @@ public class ViewIssuesActivity extends ActionBarActivity {
 	        		e.printStackTrace();
 	        	} catch (IOException e) {
 	        		e.printStackTrace();
-	        	}
+	        	} catch (XmlPullParserException e) {
+					e.printStackTrace();
+				}
 	        }
 	        
 	        return responseString;
@@ -119,7 +126,7 @@ public class ViewIssuesActivity extends ActionBarActivity {
 	        super.onPostExecute(result);
 	        //Do anything with response..
 	        TextView tv = (TextView)findViewById(R.id.textView1);
-	        tv.setText(result);
+	        tv.setText(serviceRequests.get(0).toString());
 	        
 	    }
 	}
