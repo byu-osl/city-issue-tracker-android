@@ -3,6 +3,7 @@ package byu.zappala.cityissuetracker;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -24,18 +25,29 @@ import byu.zappala.cityissuetracker.utils.ServiceRequestXMLParser;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.os.Build;
 
 public class ViewIssuesActivity extends ActionBarActivity {
 
+	List<ServiceRequest> serviceRequests = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,7 +57,9 @@ public class ViewIssuesActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-		new RequestTask().execute("http://311.zappala.org/requests.xml", "GET_SERVICE_LIST");
+		
+		new RequestTask(this).execute("http://311.zappala.org/requests.xml", "GET_SERVICE_LIST");
+		
 	}
 
 	@Override
@@ -72,7 +86,7 @@ public class ViewIssuesActivity extends ActionBarActivity {
 	 * A placeholder fragment containing a simple view.
 	 */
 	public static class PlaceholderFragment extends Fragment {
-
+		
 		public PlaceholderFragment() {
 		}
 
@@ -86,8 +100,11 @@ public class ViewIssuesActivity extends ActionBarActivity {
 	}
 	
 	class RequestTask extends AsyncTask<String, String, String>{
-
-		List<ServiceRequest> serviceRequests = null;
+		private Context context;
+		
+	    public RequestTask (Context context){
+	         this.context = context;
+	    }
 		
 		@Override
 		protected String doInBackground(String... params) {
@@ -124,13 +141,70 @@ public class ViewIssuesActivity extends ActionBarActivity {
 		@Override
 	    protected void onPostExecute(String result) {
 	        super.onPostExecute(result);
-	        //Do anything with response..
-	        TextView tv = (TextView)findViewById(R.id.textView1);
-	        tv.setText(serviceRequests.get(0).toString());
+	        final ListView lv = (ListView)findViewById(R.id.listView1);
+	        final ServiceRequestArrayAdapter adapter = new ServiceRequestArrayAdapter(this.context,
+	                android.R.layout.simple_list_item_2, serviceRequests);
+	        lv.setAdapter(adapter);
 	        
 	    }
 	}
 	
+	  private class ServiceRequestArrayAdapter extends ArrayAdapter<ServiceRequest> {
+		    private final Context context;
+		    private final List<ServiceRequest> values; 
+		  
+		    public ServiceRequestArrayAdapter(Context context, int textViewResourceId,
+		        List<ServiceRequest> objects) {
+		      super(context, textViewResourceId, objects);
+		      this.context = context;
+		      this.values = objects;
+		    }
+		    
+		    /** Called when the user touches the button 
+		     * @param serviceRequest2 */
+			public void handleViewIssue(View view, ServiceRequest serviceRequest) {
+				Intent intent = new Intent(context, ViewIssueActivity.class);
+				intent.putExtra("service_request", serviceRequest);
+				startActivity(intent);
+			}
+		    
+		    @Override
+		    public View getView(int position, View convertView, ViewGroup parent) {
+		      LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		      View rowView = inflater.inflate(R.layout.row_layout, parent, false);
+		  	  final ServiceRequest serviceRequest = values.get(position);
+		      rowView.setOnClickListener(new OnClickListener() {
+
+		    	    @Override
+		    	    public void onClick(View v) {
+		    	    	handleViewIssue(v, serviceRequest);
+		    	    }
+		    	});
+		      
+		      LinearLayout linearLayout = (LinearLayout) rowView.findViewById(R.id.linearLayout1);
+		      TextView textView1 = (TextView) linearLayout.findViewById(R.id.textView1);
+		      TextView textView2 = (TextView) linearLayout.findViewById(R.id.textView2);
+		      
+		      String description = values.get(position).getDescription();
+		      if(description == "") {
+		    	  description = "No Description Available";
+		      }
+		     
+		      String address = values.get(position).getAddress();
+		      if(address == "") {
+		    	  address = "No Address Available";
+		      }
+		      
+		      textView1.setText(description);
+		      textView2.setText(address);
+		      return rowView;
+		    }
+		    
+		   
+
+		  }
+	  
+	    
 	
 
 }

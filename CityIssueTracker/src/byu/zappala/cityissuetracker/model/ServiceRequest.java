@@ -1,6 +1,9 @@
 package byu.zappala.cityissuetracker.model;
 
-public class ServiceRequest {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class ServiceRequest implements Serializable  {
 	
 	String serviceRequestID;
 	String status;

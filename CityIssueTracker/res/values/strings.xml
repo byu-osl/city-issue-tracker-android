@@ -9,5 +9,7 @@
     <string name="post_service_request_button">Post Service Request</string>
     <string name="view_issues_button">View Issues</string>
     <string name="title_activity_view_issues">ViewIssuesActivity</string>
+    <string name="title_activity_view_issue">ViewIssueActivity</string>
+    <string name="title_activity_report_issue">ReportIssueActivity</string>
 
 </resources>

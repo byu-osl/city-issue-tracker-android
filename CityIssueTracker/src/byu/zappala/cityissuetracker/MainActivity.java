@@ -67,6 +67,13 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	/** Called when the user touches the button */
+	public void handleReportIssue(View view) {
+		Intent intent = new Intent(this, ReportIssueActivity.class);
+		startActivity(intent);
+	}
+	
+	
+	/** Called when the user touches the button */
 	public void handleGetServiceList(View view) {
 		new RequestTask().execute("http://311.zappala.org/requests.xml", "GET_SERVICE_LIST");
 	}

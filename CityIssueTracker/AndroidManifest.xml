@@ -26,8 +26,16 @@
             android:name="byu.zappala.cityissuetracker.ViewIssuesActivity"
             android:label="@string/title_activity_view_issues" >
         </activity>
+        <activity
+            android:name="byu.zappala.cityissuetracker.ViewIssueActivity"
+            android:label="@string/title_activity_view_issue" >
+        </activity>
+        <activity
+            android:name="byu.zappala.cityissuetracker.ReportIssueActivity"
+            android:label="@string/title_activity_report_issue" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>
