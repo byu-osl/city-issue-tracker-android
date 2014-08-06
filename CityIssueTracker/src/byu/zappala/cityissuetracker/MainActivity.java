@@ -75,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
 	
 	/** Called when the user touches the button */
 	public void handleGetServiceList(View view) {
-		new RequestTask().execute("http://311.zappala.org/requests.xml", "GET_SERVICE_LIST");
+		new RequestTask().execute("http://311.zappala.org/services.xml", "GET_SERVICE_LIST");
 	}
 	
 	/** Called when the user touches the button */
