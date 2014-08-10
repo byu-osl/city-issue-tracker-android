@@ -21,6 +21,7 @@ public class ServiceRequest implements Serializable  {
 	String zipcode;
 	double latitude;
 	double longitude;
+	String email;
 	String mediaURL;
 	
 	public ServiceRequest(String serviceRequestID, String status,
@@ -29,7 +30,7 @@ public class ServiceRequest implements Serializable  {
 			String serviceNotice, String requestedDatetime,
 			String updatedDatetime, String expectedDatetime, String address,
 			String addressID, String zipcode, double latitude,
-			double longitude, String mediaURL) {
+			double longitude, String email, String mediaURL) {
 		
 		this.serviceRequestID = serviceRequestID;
 		this.status = status;
@@ -47,6 +48,7 @@ public class ServiceRequest implements Serializable  {
 		this.zipcode = zipcode;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.email = email;
 		this.mediaURL = mediaURL;
 		
 	}
@@ -57,10 +59,10 @@ public class ServiceRequest implements Serializable  {
 		return String.format("Service Request ID: %s, Status: %s, Status Notes: %s, Service Name: %s, "
 				           + "Service Code: %s, Description: %s, Agency Responsible: %s, Service Notice: %s, "
 				           + "Requested Datetime: %s, Updated Datetime: %s, Expected Datetime: %s, Address: %s, "
-				           + "Address ID: %s, Zipcode: %s, Latitude: %f, Longitude: %f, Media URL: %s", 
+				           + "Address ID: %s, Zipcode: %s, Latitude: %f, Longitude: %f, email: %s, Media URL: %s", 
 				           serviceRequestID, status, statusNotes, serviceName, serviceCode, description, 
 				           agencyResponsible, serviceNotice, requestedDatetime, updatedDatetime,
-				           expectedDatetime, address, addressID, zipcode, latitude, longitude, mediaURL);	
+				           expectedDatetime, address, addressID, zipcode, latitude, longitude, email, mediaURL);	
 	}
 	
 	public String getServiceRequestID() {
@@ -158,6 +160,12 @@ public class ServiceRequest implements Serializable  {
 	}
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	public String getMediaURL() {
 		return mediaURL;

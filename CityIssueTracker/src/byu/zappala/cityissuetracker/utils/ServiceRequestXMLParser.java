@@ -67,6 +67,7 @@ public class ServiceRequestXMLParser {
 		String zipcode = "";
 		double latitude = 0;
 		double longitude = 0;
+		String email = "";
 		String mediaURL = "";
 		
 		while (parser.next() != XmlPullParser.END_TAG) {
@@ -109,13 +110,16 @@ public class ServiceRequestXMLParser {
 				latitude = readLatitude(parser);
 			} else if(name.equals("long")) {
 				longitude = readLongitude(parser);
+			} else if(name.equals("email")) {
+				email = readEmail(parser);
 			} else if(name.equals("media_url")) {
-				
+				mediaURL = readMediaURL(parser);
 			}
 		}
 		return new ServiceRequest(serviceRequestID, status, statusNotes, serviceName, serviceCode, description, agencyResponsible, serviceNotice,
-				requestedDatetime, updatedDatetime, expectedDatetime, address, addressID, zipcode, latitude, longitude, mediaURL);
+				requestedDatetime, updatedDatetime, expectedDatetime, address, addressID, zipcode, latitude, longitude, email, mediaURL);
 	}
+
 
 	private double readLatitude(XmlPullParser parser) throws XmlPullParserException, IOException {
 		try {
@@ -140,6 +144,20 @@ public class ServiceRequestXMLParser {
 	    catch (NumberFormatException e) {
 	    	return 0;
         }
+	}
+	
+	private String readEmail(XmlPullParser parser) throws XmlPullParserException, IOException  {
+		parser.require(XmlPullParser.START_TAG, null, "email");
+	    String email = readText(parser);
+	    parser.require(XmlPullParser.END_TAG, null, "email");
+	    return email;
+	}
+    
+	private String readMediaURL(XmlPullParser parser) throws XmlPullParserException, IOException  {
+		parser.require(XmlPullParser.START_TAG, null, "media_url");
+	    String mediaURL = readText(parser);
+	    parser.require(XmlPullParser.END_TAG, null, "media_url");
+	    return mediaURL;
 	}
 
 	private String readZipcode(XmlPullParser parser) throws XmlPullParserException, IOException {
