@@ -24,6 +24,9 @@ public class ServiceRequest implements Serializable  {
 	String email;
 	String mediaURL;
 	
+	boolean ImageDownloaded = false;
+	Integer position = null;
+	
 	public ServiceRequest(String serviceRequestID, String status,
 			String statusNotes, String serviceName, String serviceCode,
 			String description, String agencyResponsible,
@@ -56,10 +59,10 @@ public class ServiceRequest implements Serializable  {
 	@Override
 	public String toString() {
 		//return "Hello!";
-		return String.format("Service Request ID: %s, Status: %s, Status Notes: %s, Service Name: %s, "
-				           + "Service Code: %s, Description: %s, Agency Responsible: %s, Service Notice: %s, "
-				           + "Requested Datetime: %s, Updated Datetime: %s, Expected Datetime: %s, Address: %s, "
-				           + "Address ID: %s, Zipcode: %s, Latitude: %f, Longitude: %f, email: %s, Media URL: %s", 
+		return String.format("   Service Request ID: %s\n Status: %s\n Status Notes: %s\n Service Name: %s\n "
+				           + "Service Code: %s\n Description: %s\n Agency Responsible: %s\n Service Notice: %s\n "
+				           + "Requested Datetime: %s\n Updated Datetime: %s\n Expected Datetime: %s\n Address: %s\n "
+				           + "Address ID: %s\n Zipcode: %s\n Latitude: %f\n Longitude: %f\n email: %s\n Media URL: %s\n", 
 				           serviceRequestID, status, statusNotes, serviceName, serviceCode, description, 
 				           agencyResponsible, serviceNotice, requestedDatetime, updatedDatetime,
 				           expectedDatetime, address, addressID, zipcode, latitude, longitude, email, mediaURL);	
@@ -173,5 +176,22 @@ public class ServiceRequest implements Serializable  {
 	public void setMediaURL(String mediaURL) {
 		this.mediaURL = mediaURL;
 	}
+	
+	public boolean isImageDownloaded() {
+		return ImageDownloaded;
+	}
+
+	public void setImageDownloaded(boolean ImageDownloaded) {
+		this.ImageDownloaded = ImageDownloaded;
+	}
+	
+	public Integer getPosition() {
+		return position;
+	}
+
+	public void setPosition(Integer position) {
+		this.position = position;
+	}
+
 	
 }

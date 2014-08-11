@@ -1,73 +1,34 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-<RelativeLayout
+    android:id="@+id/TableLayout1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="330dp"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="byu.zappala.cityissuetracker.MainActivity$PlaceholderFragment" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button3"
-        android:layout_below="@+id/button3"
-        android:layout_marginTop="68dp"
-        android:text="TextView" />
-
     <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button3"
-        android:layout_centerHorizontal="true"
-        android:onClick="handlePostServiceRequest"
-        android:text="@string/post_service_request_button" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button2"
-        android:layout_alignRight="@+id/button2"
-        android:layout_below="@+id/Button03"
-        android:onClick="handleGetServiceRequest"
-        android:text="@string/get_service_request_button" />
-
-    <Button
-        android:id="@+id/Button03"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button3"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/button3"
-        android:layout_marginTop="56dp"
-        android:onClick="handleGetServiceList"
-        android:text="@string/get_service_list_button" />
+        android:id="@+id/button4"
+        android:layout_width="256dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/custom_button"
+        android:onClick="handleReportIssue"
+        android:padding="0dp"
+        android:text="Report Issue"
+        android:textColor="@color/White" />
 
     <Button
         android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_width="256dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/custom_button_2"
         android:onClick="handleViewIssues"
-        android:text="@string/view_issues_button" />
+        android:padding="20dp"
+        android:text="@string/view_issues_button"
+        android:textColor="@color/White" />
 
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button1"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_alignParentRight="true"
-        android:onClick="handleReportIssue"
-        android:text="Report Issue" />
-
-</RelativeLayout>
-</ScrollView>
+</TableLayout>

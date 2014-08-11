@@ -22,6 +22,9 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParserException;
 
 import byu.zappala.cityissuetracker.MainActivity.RequestTask;
@@ -33,6 +36,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -67,14 +71,16 @@ public class ReportIssueActivity extends ActionBarActivity {
 	double latitude = 0;
 	double longitude = 0;
 	EditText descriptionText;
+	EditText addressText;
 	EditText firstNameText;
 	EditText lastNameText;
+	EditText emailText;
 	List<Service> services = null;
 	Bitmap imageBitmap = null; 
 	Uri imageUri = null;
 	
 	static final int REQUEST_IMAGE_CAPTURE = 1;
-
+	ProgressDialog dialog = null;
 	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState){
@@ -98,7 +104,7 @@ public class ReportIssueActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_report_issue);
-		
+		this.setTitle("Report Issue");
 		
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
@@ -172,13 +178,22 @@ public class ReportIssueActivity extends ActionBarActivity {
 	        imageBitmap = (Bitmap) extras.get("data");
 	        imageUri = data.getData();
 	        ImageView image = (ImageView)findViewById(R.id.imageView1);
-	        image.setImageBitmap(imageBitmap);
+	       
+	        /*
+	        Matrix matrix = new Matrix();
+			matrix.postRotate(90);
+			Bitmap rotatedImageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, imageBitmap.getWidth(), imageBitmap.getHeight(), matrix, true);
+			imageBitmap = rotatedImageBitmap;
+	        */
+	        
+			image.setImageBitmap(imageBitmap);
 	    }
 	}
 	
 	/** Called when the user touches the button */
 	public void handleSubmitRequest(View view) {
-		new PostRequestTask(this).execute("http://311.zappala.org/requests.xml", "POST_SERVICE_REQUEST");
+		new PostRequestTask(this).execute("http://311.zappala.org/requests.xml", "POST_SERVICE_REQUEST", getRealPathFromURI(this, imageUri));
+		dialog = ProgressDialog.show(this, "Uploading Request", "Please wait...", true);
 	}
 	
 	/** Called when the user touches the button to take a picture*/
@@ -186,20 +201,11 @@ public class ReportIssueActivity extends ActionBarActivity {
 		takePicture();
 	}
 
-	/** Called when the user touches the button to take a picture*/
-	public void handleSendPicture(View view) {
-		sendPicture();
-	}
-	
 	private void takePicture() {
 	    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 	    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
 	        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
 	    }
-	}
-	
-	private void sendPicture() {
-		new PostImageTask(this).execute(getRealPathFromURI(this, imageUri));
 	}
 	
 	public String getRealPathFromURI(Context context, Uri contentUri) {
@@ -210,7 +216,10 @@ public class ReportIssueActivity extends ActionBarActivity {
 		    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
 		    cursor.moveToFirst();
 		    return cursor.getString(column_index);
-		  } finally {
+		  } catch (Exception e){
+			return null;
+		  }
+		  finally {
 		    if (cursor != null) {
 		      cursor.close();
 		    }
@@ -255,7 +264,9 @@ public class ReportIssueActivity extends ActionBarActivity {
 	        		firstNameText = (EditText)findViewById(R.id.firstNameText);
 	        		lastNameText = (EditText)findViewById(R.id.lastNameText);
 	        		descriptionText = (EditText)findViewById(R.id.editText1);
-	        		
+	        		addressText = (EditText) findViewById(R.id.editText2);
+	        		System.out.println(addressText.getText().toString());
+	        		emailText = (EditText) findViewById(R.id.editText3);
 	        		// Request parameters and other properties.
 	        		List<NameValuePair> parameters = new ArrayList<NameValuePair>();  
 	        		parameters.add(new BasicNameValuePair("api_key", ConfigConstants.API_KEY));
@@ -270,6 +281,11 @@ public class ReportIssueActivity extends ActionBarActivity {
 	        		parameters.add(new BasicNameValuePair("first_name", firstNameText.getText().toString()));
 	        		parameters.add(new BasicNameValuePair("last_name", lastNameText.getText().toString()));
 	        		parameters.add(new BasicNameValuePair("description", descriptionText.getText().toString()));
+	        		parameters.add(new BasicNameValuePair("address_string", addressText.getText().toString()));
+	        		parameters.add(new BasicNameValuePair("email", emailText.getText().toString()));
+	        		
+	        		String imageURL = PostImageToImgur(params[2]);
+	        		parameters.add(new BasicNameValuePair("media_url", imageURL));
 	        		
 	        		httppost.setEntity(new UrlEncodedFormEntity(parameters, "UTF-8")); 
 	        		response = httpclient.execute(httppost);
@@ -306,6 +322,7 @@ public class ReportIssueActivity extends ActionBarActivity {
 				}
 			});
 			AlertDialog alert = builder.create();
+			dialog.dismiss();
 			alert.show();
 			 
 	    }
@@ -358,67 +375,51 @@ public class ReportIssueActivity extends ActionBarActivity {
 	    }
 	}
 	
-	class PostImageTask extends AsyncTask<String, String, String>{
-		private Context context;
-		
-	    public PostImageTask (Context context){
-	         this.context = context;
-	    }
-		
-		@Override
-		protected String doInBackground(String... params) {
-			final String imgurUrl = "https://api.imgur.com/3/upload.xml";
-			final String API_KEY = "384c5f1c52b8894";
-			HttpClient httpclient = new DefaultHttpClient();
-	        HttpResponse response;
-	        String responseString = null;
-	        try {
-	        	HttpPost httppost = new HttpPost(imgurUrl);
-	        	httppost.setHeader("Authorization", "Client-ID " + API_KEY);
-	        	
-	        	//ImageView image = (ImageView)findViewById(R.id.imageView1);
-	        	MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-	        	builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-	        	builder.addPart("image", new FileBody(new File(params[0])));
-	            httppost.setEntity(builder.build());
-	       
-	        	
-	        	response = httpclient.execute(httppost);
-	        	StatusLine statusLine = response.getStatusLine();
-	        	ByteArrayOutputStream out = new ByteArrayOutputStream();
-	        	response.getEntity().writeTo(out);
-	        	out.close();
-	        	responseString = out.toString();
-	        	if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-	        		return "Successfully uploaded picture";
-	        	} else{ 
-	        		return "Error: Picture could not upload";
-	        	}
-	        	} catch (ClientProtocolException e) {
-	        		e.printStackTrace();
-	        	} catch (IOException e) {
-	        		e.printStackTrace();
-	        	}
-	        
-	        return "Error: exception thrown";
+	String PostImageToImgur(String imagePath) {
+		if(imagePath == null) {
+			return "";
 		}
-	
-		@Override
-	    protected void onPostExecute(String result) {
-			 super.onPostExecute(result);
-			 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-			 builder.setMessage(result).setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface arg0, int arg1) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
-			 
-	    }
+		final String imgurUrl = "https://api.imgur.com/3/upload.json";
+		final String API_KEY = "384c5f1c52b8894";
+		HttpClient httpclient = new DefaultHttpClient();
+        HttpResponse response;
+        String responseString = null;
+        String imageURL = "";
+        
+        try {
+        	HttpPost httppost = new HttpPost(imgurUrl);
+        	httppost.setHeader("Authorization", "Client-ID " + API_KEY);
+        	
+        	//ImageView image = (ImageView)findViewById(R.id.imageView1);
+        	MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        	builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        	builder.addPart("image", new FileBody(new File(imagePath)));
+            httppost.setEntity(builder.build());
+     	
+        	response = httpclient.execute(httppost);
+        	StatusLine statusLine = response.getStatusLine();
+        	ByteArrayOutputStream out = new ByteArrayOutputStream();
+        	response.getEntity().writeTo(out);
+        	out.close();
+        	responseString = out.toString();
+        	
+        	if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+        		System.out.println(responseString);   
+        		JSONObject jsonObject = new JSONObject(responseString);
+        		JSONObject data = jsonObject.getJSONObject("data");
+        		imageURL = data.getString("link");
+        	} 
+        	
+        } catch (ClientProtocolException e) {
+        	e.printStackTrace();
+        } catch (IOException e) {
+        	e.printStackTrace();
+        } catch (JSONException e) {
+        	e.printStackTrace();
+        }  
+        return imageURL;
 	}
+	
+	
 	
 }

@@ -6,22 +6,25 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Build;
 
 public class ViewIssueActivity extends ActionBarActivity {
 
 	static ServiceRequest serviceRequest = null;
+	static Bitmap serviceRequestImage = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		serviceRequest = (ServiceRequest) getIntent().getSerializableExtra("service_request");
-		
+		serviceRequestImage = (Bitmap) getIntent().getParcelableExtra("service_request_image");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_issue);
 
@@ -29,7 +32,7 @@ public class ViewIssueActivity extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-	   
+		this.setTitle("Issue #" + serviceRequest.getServiceRequestID());
 	}
 
 	@Override
@@ -68,6 +71,10 @@ public class ViewIssueActivity extends ActionBarActivity {
 			
 			TextView textView1 = (TextView) rootView.findViewById(R.id.textView1);
 			textView1.setText(serviceRequest.toString());
+			ImageView image = (ImageView) rootView.findViewById(R.id.imageView1);
+			if(serviceRequestImage != null) {
+				image.setImageBitmap(serviceRequestImage);
+			}
 			return rootView;
 		}
 	}

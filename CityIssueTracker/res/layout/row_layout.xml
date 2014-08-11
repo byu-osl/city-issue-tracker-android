@@ -42,6 +42,9 @@
         android:layout_alignParentTop="true"
         android:layout_margin="10dp"
         android:layout_marginLeft="10dp"
-        android:src="@drawable/ic_launcher" />
+        android:adjustViewBounds="true"
+        android:maxHeight="64dp"
+        android:maxWidth="64dp"
+        android:src="@drawable/question_mark" />
 
 </RelativeLayout>
